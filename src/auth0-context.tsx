@@ -157,6 +157,12 @@ export interface Auth0ContextInterface<TUser extends User = User>
    * @param options
    */
   buildLogoutUrl: (options?: LogoutUrlOptions) => string;
+
+  loginWithUsernameAndPassword: (options?: any) => Promise<void>;
+
+  signUpWithUsernameAndPassword: (options?: any) => Promise<void>;
+
+  resetPasswordWithUsername: (options?: any) => void;
 }
 
 /**
@@ -179,6 +185,9 @@ const initialContext = {
   loginWithRedirect: stub,
   loginWithPopup: stub,
   logout: stub,
+  loginWithUsernameAndPassword: stub,
+  signUpWithUsernameAndPassword: stub,
+  resetPasswordWithUsername: stub,
 };
 
 /**

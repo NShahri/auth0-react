@@ -199,6 +199,16 @@ const defaultOnRedirectCallback = (appState?: AppState): void => {
   );
 };
 
+let client: Auth0Client | null = null;
+
+export function getAuth0Client(clientOpts: Auth0ProviderOptions) {
+  if (!client) {
+    client = new Auth0Client(toAuth0ClientOptions(clientOpts));
+  }
+
+  return client;
+}
+
 /**
  * ```jsx
  * <Auth0Provider
@@ -218,9 +228,7 @@ const Auth0Provider = (opts: Auth0ProviderOptions): JSX.Element => {
     onRedirectCallback = defaultOnRedirectCallback,
     ...clientOpts
   } = opts;
-  const [client] = useState(
-    () => new Auth0Client(toAuth0ClientOptions(clientOpts))
-  );
+  const [client] = useState(() => getAuth0Client(clientOpts));
   const [state, dispatch] = useReducer(reducer, initialAuthState);
 
   useEffect(() => {
@@ -342,6 +350,20 @@ const Auth0Provider = (opts: Auth0ProviderOptions): JSX.Element => {
         loginWithRedirect,
         loginWithPopup,
         logout,
+        loginWithUsernameAndPassword: async (opts): Promise<void> => {
+            try {
+                await client.loginWithUsernameAndPassword(opts);
+            } catch (error) {
+            // dispatch({ type: 'ERROR', error: loginError(error) });
+            throw error;
+            }
+        },
+        signUpWithUsernameAndPassword: async (opts): Promise<void> => {
+          await client.signUpWithUsernameAndPassword(opts);
+        },
+        resetPasswordWithUsername: (opts): void => {
+          client.resetPasswordWithUsername(opts);
+        },
       }}
     >
       {children}
